@@ -71,7 +71,7 @@
                     </v-card-text>
 
                     <v-card-actions>
-                        <v-btn text>More Info</v-btn>
+                        <v-btn v-on:click="goTo(char)" text>More Info</v-btn>
                         <v-spacer></v-spacer>
                         <v-btn icon
                                v-on:click="isFavouriteCharacter(char.id) ? removeCharacter(char.id) : addCharacter(char)">
@@ -95,8 +95,7 @@
     </v-container>
 </template>
 <script>
-    import {mapGetters} from 'vuex'
-    import {mapMutations} from 'vuex'
+    import {mapGetters, mapMutations} from 'vuex'
     import _ from 'lodash'
 
     export default {
@@ -158,24 +157,29 @@
                         gender: this.search.gender
                     }
                 })
-                    .then((response) => {
-                        self.characters = response.data.results
-                        self.total = response.data.info.pages
-                        this.loading = false
-                        this.$vuetify.goTo(0)
-                    })
-                    .catch((error) => {
-                        alert(error)
-                        console.log(error)
-                        this.loading = false
-                    })
+                .then((response) => {
+                    self.characters = response.data.results
+                    self.total = response.data.info.pages
+                    this.loading = false
+                    this.$vuetify.goTo(0)
+                })
+                .catch((error) => {
+                    alert(error)
+                    console.log(error)
+                    this.loading = false
+                })
             },
             reset() {
                 this.$refs.form.reset()
             },
+            goTo(char) {
+                this.setPageTitle(char.name)
+                this.$router.push({name: 'character', params: {id: char.id}})
+            },
             ...mapMutations([
                 'addCharacter',
-                'removeCharacter'
+                'removeCharacter',
+                'setPageTitle'
             ])
         },
     }

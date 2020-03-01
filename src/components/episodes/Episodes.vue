@@ -1,6 +1,6 @@
 <template>
     <v-container fluid>
-        <v-expansion-panels :class="['mb-3']">
+        <v-expansion-panels class="mb-3">
             <v-expansion-panel>
                 <v-expansion-panel-header>Filters</v-expansion-panel-header>
                 <v-expansion-panel-content>
@@ -25,7 +25,7 @@
             <v-col
                 v-for="episode in episodes"
                 :key="episode.name"
-                :class="['pb-4 pr-4']"
+                class='pb-4 pr-4'
                 cols="12"
                 xl="3"
                 lg="4"
@@ -68,8 +68,7 @@
 </template>
 
 <script>
-    import {mapGetters} from 'vuex'
-    import {mapMutations} from 'vuex'
+    import {mapGetters, mapMutations} from 'vuex'
     import _ from 'lodash'
 
     export default {
@@ -111,17 +110,17 @@
                         name: this.searchName
                     }
                 })
-                    .then((response) => {
-                        self.episodes = response.data.results
-                        self.total = response.data.info.pages
-                        self.loading = false
-                        self.$vuetify.goTo(0)
-                    })
-                    .catch((error) => {
-                        alert(error)
-                        console.log(error)
-                        self.loading = false
-                    })
+                .then((response) => {
+                    self.episodes = response.data.results
+                    self.total = response.data.info.pages
+                    self.loading = false
+                    self.$vuetify.goTo(0)
+                })
+                .catch((error) => {
+                    alert(error)
+                    console.log(error)
+                    self.loading = false
+                })
             },
             reset() {
                 this.$refs.form.reset()

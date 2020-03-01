@@ -1,10 +1,4 @@
-# rickmortykb
-
-## База знаний мультсериала "Рик и Морти"
-
-API - https://rickandmortyapi.com/
-Проект будет содержать информацию о количестве персонажей в каждой серии, описание их роли и состояния на запрашиваемый момент и тд. Отображать статистику.
-
+# rmkb
 
 ## Project setup
 ```
@@ -19,11 +13,6 @@ npm run serve
 ### Compiles and minifies for production
 ```
 npm run build
-```
-
-### Run your tests
-```
-npm run test
 ```
 
 ### Lints and fixes files

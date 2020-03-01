@@ -2,12 +2,10 @@
     <v-container>
         <v-layout row wrap>
             <v-responsive
-                max-width="1440"
                 width="100%"
                 class="mx-auto"
             >
                 <v-skeleton-loader
-                    ref="skeleton"
                     :loading="loading"
                     transition="scale-transition"
                     width="100%"
@@ -35,7 +33,7 @@
                                             absolute
                                             color="#036358"
                                         >
-                                            <v-btn>{{ slide.name }}</v-btn>
+                                            <v-btn :to="'/characters/' + slide.id">{{ slide.name }}</v-btn>
                                         </v-overlay>
                                     </v-fade-transition>
                                 </v-carousel-item>
@@ -52,7 +50,7 @@
                     <v-col
                         v-for="episode in episodes"
                         :key="episode.name"
-                        :class="['pb-4 pr-4']"
+                        class="pb-4 pr-4"
                         cols="12"
                         xl="3"
                         lg="4"
@@ -86,8 +84,7 @@
 </template>
 
 <script>
-    import {mapGetters} from 'vuex'
-    import {mapMutations} from 'vuex'
+    import {mapGetters, mapMutations} from 'vuex'
 
     export default {
         name: 'Home',
@@ -124,9 +121,9 @@
             loadSlides() {
                 this.loading = true
                 let self = this
-                let ids = this.getRandomIds(5, 300).join(',')
+                let ids = this.getRandomIds(5, 400).join(',')
 
-                this.$axios.get(`character/${ids}`)
+                this.$axios.get(`character/[${ids}]`, { crossDomain: true })
                     .then((response) => {
                         self.slides = response.data
                         self.loading = false
@@ -142,7 +139,7 @@
                 let self = this
                 let ids = this.getRandomIds(6, 31).join(',')
 
-                this.$axios.get(`episode/${ids}`)
+                this.$axios.get(`episode/[${ids}]`)
                     .then((response) => {
                         self.episodes = response.data
                         this.loadingEpisodes = false

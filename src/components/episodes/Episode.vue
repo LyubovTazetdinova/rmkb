@@ -81,7 +81,7 @@
                             </v-card-text>
 
                             <v-card-actions>
-                                <v-btn text>More Info</v-btn>
+                                <v-btn v-on:click="goTo(characters[url])" text>More Info</v-btn>
                                 <v-spacer></v-spacer>
                                 <v-btn icon v-on:click="isFavouriteCharacter(characters[url].id) ? removeCharacter(characters[url].id) : addCharacter(characters[url])">
                                     <v-icon :color="isFavouriteCharacter(characters[url].id) ? 'red' : undefined">mdi-thumb-up</v-icon>
@@ -92,7 +92,6 @@
                 </v-col>
             </v-row>
         </v-card-text>
-
         <v-overlay :value="loading" absolute>
             <v-progress-circular indeterminate size="64"></v-progress-circular>
         </v-overlay>
@@ -100,9 +99,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { mapMutations } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import Vue from 'vue'
+import Url from 'url-parse'
 
 export default {
     props: [
@@ -120,8 +119,11 @@ export default {
         }
     },
     watch: {
-        rating: function (val) {
+        rating: (val) => {
             this.setRating({ id: this.episode.id, rating: val })
+        },
+        id: function() {
+            this.loadEpisode()
         }
     },
     computed: {
@@ -152,31 +154,42 @@ export default {
             let self = this
 
             this.$axios.get('episode/' + this.id)
-            .then((response) => {
-                self.episode = response.data
-                self.setPageTitle(self.episode.name)
-                self.rating = self.getRating(self.episode.id)
-                self.loading = false
-                self.episode.characters.forEach(url => self.loadCharacter(url));
-            })
-            .catch((error) => {
-                self.loading = false
-                alert(error)
-                console.log(error)
-            })
+                .then((response) => {
+                    self.episode = response.data
+                    self.setPageTitle(self.episode.name)
+                    self.rating = self.getRating(self.episode.id)
+                    self.loading = false
+                    self.episode.characters.forEach(url => {
+                        self.loadCharacter(url)
+                    });
+                })
+                .catch((error) => {
+                    self.loading = false
+                    alert(error)
+                    console.log(error)
+                })
         },
         loadCharacter(url) {
             Vue.set(this.characters, url, { loading: true })
             let self = this
 
-            this.$axios.get(url)
+            let uri = new Url(url)
+            uri.set('hostname', 'rmkbapi.ddns.net')
+            uri.set('protocol', 'http:')
+
+            this.$axios.get(uri)
                 .then((response) => {
+                    response.data.loading = false
                     Vue.set(self.characters, url, response.data)
                 })
                 .catch((error) => {
                     alert(error)
                     console.log(error)
                 })
+        },
+        goTo(char) {
+            this.setPageTitle(char.name)
+            this.$router.push({name: 'character', params: {id: char.id}})
         },
         ...mapMutations([
             'addEpisode',
